@@ -22,7 +22,7 @@ class GameFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        parseSerializable()
+        parseParcelable()
     }
 
     override fun onCreateView(
@@ -51,8 +51,10 @@ class GameFragment : Fragment() {
         _binding = null
     }
 
-    private fun parseSerializable(){
-        level = requireArguments().getSerializable(KEY_LEVEL) as Level
+    private fun parseParcelable(){
+        requireArguments().getParcelable<Level>(KEY_LEVEL)?.let{
+            level = it
+        }
     }
 
     private fun navigateGameFinishFragment(gameResult: GameResult){
@@ -69,7 +71,7 @@ class GameFragment : Fragment() {
         fun newInstance(level:Level) : GameFragment{
             return GameFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(KEY_LEVEL,level)
+                    putParcelable(KEY_LEVEL,level)
                 }
             }
         }
