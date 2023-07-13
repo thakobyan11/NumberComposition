@@ -18,16 +18,9 @@ import java.lang.RuntimeException
 
 class GameFragment : Fragment() {
 
-    private val vm:GameViewModel by lazy {
-        ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[GameViewModel::class.java]
-    }
-
     private val tvOptions by lazy {
         mutableListOf<TextView>().apply {
-            with(binding){
+            with(binding) {
                 add(tvOption1)
                 add(tvOption2)
                 add(tvOption3)
@@ -38,10 +31,18 @@ class GameFragment : Fragment() {
         }
     }
 
-    private lateinit var level : Level
+    private lateinit var level: Level
 
-    private var _binding : FragmentGameBinding? = null
-    private val binding : FragmentGameBinding
+    private val vmFactory by lazy {
+        GameViewModelFactory(requireActivity().application, level)
+    }
+
+    private val vm: GameViewModel by lazy {
+        ViewModelProvider(this,vmFactory)[GameViewModel::class.java]
+    }
+
+    private var _binding: FragmentGameBinding? = null
+    private val binding: FragmentGameBinding
         get() = _binding ?: throw RuntimeException("FragmentGame = null")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,57 +62,56 @@ class GameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeLiveData()
         setOnClickListenersInOptions()
-        vm.startGame(level)
     }
 
-    private fun setOnClickListenersInOptions(){
-        tvOptions.forEach {textView ->
+    private fun setOnClickListenersInOptions() {
+        tvOptions.forEach { textView ->
             textView.setOnClickListener {
                 vm.chooseAnswer(textView.text.toString().toInt())
             }
         }
     }
 
-    private fun observeLiveData(){
-        vm.question.observe(viewLifecycleOwner){
+    private fun observeLiveData() {
+        vm.question.observe(viewLifecycleOwner) {
             binding.tvSum.text = it.sum.toString()
             binding.tvLeftNumber.text = it.visibleNumber.toString()
-            for (i in 0 until tvOptions.size){
+            for (i in 0 until tvOptions.size) {
                 tvOptions[i].text = it.options[i].toString()
             }
         }
-        vm.percentOfRightAnswers.observe(viewLifecycleOwner){
-            binding.progressBar.setProgress(it,true)
+        vm.percentOfRightAnswers.observe(viewLifecycleOwner) {
+            binding.progressBar.setProgress(it, true)
         }
-        vm.enoughCountOfRightAnswers.observe(viewLifecycleOwner){
+        vm.enoughCountOfRightAnswers.observe(viewLifecycleOwner) {
 
             binding.tvAnswersProgress.setTextColor(getColorByState(it))
         }
-        vm.enoughPercentOfRightAnswers.observe(viewLifecycleOwner){
+        vm.enoughPercentOfRightAnswers.observe(viewLifecycleOwner) {
             val color = getColorByState(it)
             binding.progressBar.progressTintList = ColorStateList.valueOf(color)
         }
-        vm.time.observe(viewLifecycleOwner){
+        vm.time.observe(viewLifecycleOwner) {
             binding.tvTimer.text = it
         }
-        vm.minPercent.observe(viewLifecycleOwner){
+        vm.minPercent.observe(viewLifecycleOwner) {
             binding.progressBar.secondaryProgress = it
         }
-        vm.gameResult.observe(viewLifecycleOwner){
+        vm.gameResult.observe(viewLifecycleOwner) {
             navigateGameFinishFragment(it)
         }
-        vm.progressAnswers.observe(viewLifecycleOwner){
+        vm.progressAnswers.observe(viewLifecycleOwner) {
             binding.tvAnswersProgress.text = it
         }
     }
 
-    private fun getColorByState(stateColor:Boolean):Int{
-        val colorResId = if (stateColor){
+    private fun getColorByState(stateColor: Boolean): Int {
+        val colorResId = if (stateColor) {
             android.R.color.holo_green_light
-        }else{
+        } else {
             android.R.color.holo_red_light
         }
-        return ContextCompat.getColor(requireContext(),colorResId)
+        return ContextCompat.getColor(requireContext(), colorResId)
     }
 
 
@@ -120,27 +120,27 @@ class GameFragment : Fragment() {
         _binding = null
     }
 
-    private fun parseParcelable(){
-        requireArguments().getParcelable<Level>(KEY_LEVEL)?.let{
+    private fun parseParcelable() {
+        requireArguments().getParcelable<Level>(KEY_LEVEL)?.let {
             level = it
         }
     }
 
-    private fun navigateGameFinishFragment(gameResult: GameResult){
+    private fun navigateGameFinishFragment(gameResult: GameResult) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container,GameFinishedFragment.newInstance(gameResult))
+            .replace(R.id.main_container, GameFinishedFragment.newInstance(gameResult))
             .addToBackStack(null)
             .commit()
     }
 
-    companion object{
+    companion object {
         const val Name = "GameFragment"
         private const val KEY_LEVEL = "level"
 
-        fun newInstance(level:Level) : GameFragment{
+        fun newInstance(level: Level): GameFragment {
             return GameFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(KEY_LEVEL,level)
+                    putParcelable(KEY_LEVEL, level)
                 }
             }
         }
