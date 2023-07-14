@@ -30,7 +30,6 @@ class GameFragment : Fragment() {
         }
     }
 
-
     private val args by navArgs<GameFragmentArgs>()
 
     private val vmFactory by lazy {
