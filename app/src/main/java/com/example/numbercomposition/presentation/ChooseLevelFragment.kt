@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.numbercomposition.R
 import com.example.numbercomposition.databinding.FragmentChooseLevelBinding
 import com.example.numbercomposition.domain.entity.Level
 import java.lang.RuntimeException
@@ -51,14 +50,9 @@ class ChooseLevelFragment : Fragment() {
     }
 
     private fun navigateToEasyGameFragment(level: Level){
-        val arguments = Bundle().apply {
-            putParcelable(GameFragment.KEY_LEVEL, level)
-        }
-        findNavController().navigate(R.id.action_chooseLevelFragment_to_gameFragment,arguments)
+        findNavController().navigate(
+            ChooseLevelFragmentDirections.actionChooseLevelFragmentToGameFragment(level)
+        )
     }
 
-    companion object{
-        const val NAME = "ChooseLevelFragment"
-        fun newInstance() = ChooseLevelFragment()
-    }
 }
