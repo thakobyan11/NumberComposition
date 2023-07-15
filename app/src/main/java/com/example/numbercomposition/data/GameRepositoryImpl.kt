@@ -4,8 +4,6 @@ import com.example.numbercomposition.domain.entity.GameSettings
 import com.example.numbercomposition.domain.entity.Level
 import com.example.numbercomposition.domain.entity.Question
 import com.example.numbercomposition.domain.repository.GameRepository
-import java.util.Collections.max
-import java.util.Collections.min
 import kotlin.random.Random
 
 object GameRepositoryImpl : GameRepository {
@@ -35,7 +33,7 @@ object GameRepositoryImpl : GameRepository {
                     10,
                     3,
                     50,
-                    8
+                    4
                 )
             }
             Level.EASY -> {
