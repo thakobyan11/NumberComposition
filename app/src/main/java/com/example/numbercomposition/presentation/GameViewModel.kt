@@ -2,7 +2,6 @@ package com.example.numbercomposition.presentation
 
 import android.app.Application
 import android.os.CountDownTimer
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -137,7 +136,7 @@ class GameViewModel(
         )
     }
 
-    private fun formatTime(millis: Long): String {
+     fun formatTime(millis: Long): String {
         val seconds = millis / MILLIS_IN_SECOND
         val minute = seconds / SECONDS_IN_MILLIS
         val leftSeconds = seconds - (minute * MILLIS_IN_SECOND)
